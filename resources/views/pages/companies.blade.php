@@ -28,16 +28,14 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 mt-20">
 
                 <!-- Academy -->
-                <a href="https://masharikiacademy.org/"
-                   target="_blank"
-                   rel="noopener noreferrer"
+                <a href="{{ route('academy.home') }}"
                    class="group flex flex-col rounded-[2rem] border border-gray-100 bg-white p-8 lg:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.04)] transition duration-300 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
 
                     <div class="flex items-start justify-between gap-4 mb-8">
                         <div class="flex h-24 w-24 items-center justify-center rounded-2xl border border-gray-100 bg-[#fafafa] p-4">
                             <img
                                 src="/images/masharikiacademy_black.png"
-                                alt="Mashariki Academy Logo"
+                                alt="Mashariki Arts Academy Logo"
                                 class="max-h-14 w-auto object-contain"
                             >
                         </div>
@@ -48,7 +46,7 @@
                     </div>
 
                     <h2 class="text-2xl font-semibold text-[#111111] mb-3">
-                        Mashariki Academy
+                        Mashariki Arts Academy
                     </h2>
 
                     <p class="text-gray-600 leading-7 mb-8 flex-grow">
@@ -61,16 +59,14 @@
                             Visit website
                         </span>
 
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-orange-50 text-orange-500 transition group-hover:bg-orange-100">
+                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[var(--accent)] transition group-hover:bg-[var(--accent)]/20">
                             →
                         </span>
                     </div>
                 </a>
 
                 <!-- Masharket -->
-                <a href="https://masharket.com/"
-                   target="_blank"
-                   rel="noopener noreferrer"
+                <a href="{{ route('market.home') }}"
                    class="group flex flex-col rounded-[2rem] border border-gray-100 bg-white p-8 lg:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.04)] transition duration-300 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
 
                     <div class="flex items-start justify-between gap-4 mb-8">
@@ -107,17 +103,15 @@
                     </div>
                 </a>
 
-                <!-- Festival -->
-                <a href="https://www.masharikifestival.org/"
-                   target="_blank"
-                   rel="noopener noreferrer"
+                <!-- Festival: staged brand in this app now — internal link (see config/brands.php) -->
+                <a href="{{ route('festival.home') }}"
                    class="group flex flex-col rounded-[2rem] border border-gray-100 bg-white p-8 lg:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.04)] transition duration-300 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
 
                     <div class="flex items-start justify-between gap-4 mb-8">
                         <div class="flex h-24 w-24 items-center justify-center rounded-2xl border border-gray-100 bg-[#fafafa] p-4">
                             <img
                                 src="/images/masharikifilmfestival.png"
-                                alt="Mashariki Festival Logo"
+                                alt="Mashariki African Film Festival Logo"
                                 class="max-h-14 w-auto object-contain"
                             >
                         </div>
@@ -128,17 +122,17 @@
                     </div>
 
                     <h2 class="text-2xl font-semibold text-[#111111] mb-3">
-                        Mashariki Festival
+                        Mashariki African Film Festival
                     </h2>
 
                     <p class="text-gray-600 leading-7 mb-8 flex-grow">
-                        A cultural platform celebrating African storytelling,
-                        creativity, and innovation through festivals and events.
+                        The annual celebration of African cinema in Kigali — screenings, panels,
+                        masterclasses, and premieres (MAAFF).
                     </p>
 
                     <div class="flex items-center justify-between pt-6 border-t border-gray-100">
                         <span class="text-sm font-medium text-[#111111] transition group-hover:translate-x-1">
-                            Visit website
+                            Visit the Festival
                         </span>
 
                         <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-purple-50 text-purple-500 transition group-hover:bg-purple-100">
@@ -150,5 +144,7 @@
             </div>
         </div>
     </section>
+
+    @include('partials.footer')
 
 @endsection

@@ -13,7 +13,7 @@
 
                 <div>
                     <div class="inline-flex items-center gap-3 rounded-full border border-black/10 bg-white/70 backdrop-blur px-4 py-2 mb-8 shadow-sm">
-                        <span class="h-2.5 w-2.5 rounded-full bg-orange-500"></span>
+                        <span class="h-2.5 w-2.5 rounded-full bg-[var(--accent)]"></span>
                         <span class="text-[11px] md:text-xs tracking-[0.26em] uppercase text-gray-600 font-medium">
                             Contact Mashariki Group
                         </span>
@@ -33,8 +33,8 @@
 
                     <div class="grid sm:grid-cols-2 gap-5">
                         <div class="rounded-3xl bg-white/90 backdrop-blur p-6 border border-white/80 shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
-                            <div class="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center mb-4">
-                                <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-12 h-12 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center mb-4">
+                                <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 5a2 2 0 012-2h3.28a2 2 0 011.895 1.368l1.074 3.222a2 2 0 01-.457 2.11l-1.547 1.547a16.042 16.042 0 006.506 6.506l1.547-1.547a2 2 0 012.11-.457l3.222 1.074A2 2 0 0121 15.72V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                 </svg>
                             </div>
@@ -202,5 +202,7 @@
             </div>
         </div>
     </section>
+
+    @include('partials.footer')
 
 @endsection

@@ -9,11 +9,11 @@
         <div class="max-w-6xl mx-auto">
 
             <h1 class="text-6xl mb-10">
-                Mashariki Academy
+                Mashariki Arts Academy
             </h1>
 
             <p class="text-gray-600 text-lg leading-relaxed mb-8">
-                Mashariki Academy is focused on developing the next generation of African creatives through education, training, and mentorship programs across media, storytelling, and digital production.
+                Mashariki Arts Academy is focused on developing the next generation of African creatives through education, training, and mentorship programs across media, storytelling, and digital production.
             </p>
 
             <a href="https://masharikiacademy.org/" target="_blank"
@@ -24,5 +24,7 @@
         </div>
 
     </section>
+
+    @include('partials.footer')
 
 @endsection

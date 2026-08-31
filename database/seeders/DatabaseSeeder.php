@@ -21,5 +21,15 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        $this->call(MarketContentSeeder::class);
+        $this->call(AcademyProgramSeeder::class);
+        $this->call(MarketProgramSeeder::class);
+        $this->call(MarketFaqSeeder::class);
+        $this->call(MarketNewsSeeder::class);
+        $this->call(MarketGallerySeeder::class);
+        $this->call(FestivalContentSeeder::class);
+        $this->call(RolesAndPermissionsSeeder::class);
+        $this->call(AcademyFormFieldSeeder::class);
     }
 }

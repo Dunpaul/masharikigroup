@@ -18,6 +18,8 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/mashariki_group
+*.sqlite
 /vendor
 Homestead.json
 Homestead.yaml

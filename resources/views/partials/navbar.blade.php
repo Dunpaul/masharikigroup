@@ -1,61 +1,92 @@
 <header
     x-data="{ open: false }"
-    class="sticky top-0 z-50 w-full border-b border-black/5 bg-[#eef0f2]/80 backdrop-blur-xl"
+    class="sticky top-0 z-50 w-full border-b border-black/5 bg-[var(--brand-bg)]/80 backdrop-blur-xl"
 >
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div class="flex h-20 items-center justify-between">
 
-            <a href="/" class="group inline-flex items-center gap-3">
+            <a href="{{ route($brand['nav'][0]['route']) }}" class="group inline-flex items-center gap-3">
                 <div class="flex h-11 w-11 items-center justify-center rounded-xl border border-black/15 bg-white/70 text-sm font-semibold text-black shadow-sm transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-md">
-                    M
+                    {{ strtoupper(substr($brand['short_name'], 0, 1)) }}
                 </div>
 
                 <div class="flex flex-col leading-none">
                     <span class="text-[11px] uppercase tracking-[0.28em] text-gray-500">
-                        Group
+                        Mashariki
                     </span>
                     <span class="text-base md:text-lg font-semibold tracking-[0.18em] text-[#111111]">
-                        MASHARIKI
+                        {{ strtoupper($brand['short_name']) }}
                     </span>
                 </div>
             </a>
 
-            <nav class="hidden md:flex items-center gap-2 rounded-full border border-black/5 bg-white/60 px-3 py-2 shadow-sm backdrop-blur">
-                <a
-                    href="/"
-                    class="{{ request()->is('/') ? 'bg-[#111111] text-white shadow-sm' : 'text-gray-700 hover:text-black' }} rounded-full px-5 py-2.5 text-sm font-medium transition duration-300"
-                >
-                    Home
-                </a>
+            <nav class="hidden md:flex items-center gap-1 flex-wrap justify-end rounded-full border border-black/5 bg-white/60 px-3 py-2 shadow-sm backdrop-blur max-w-2xl">
+                @foreach ($brand['nav'] as $item)
+                    @if (isset($item['children']))
+                        @php
+                            $childRoutes = collect($item['children'])->pluck('route')->filter()->all();
+                            $isActive = request()->routeIs($item['route']) || request()->routeIs(...$childRoutes);
+                        @endphp
+                        <div class="relative" x-data="{ subOpen: false }" @click.outside="subOpen = false">
+                            <button
+                                type="button"
+                                @click="subOpen = !subOpen"
+                                class="{{ $isActive ? 'bg-[var(--accent)] text-white shadow-sm' : 'text-gray-700 hover:text-[var(--accent)]' }} inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-sm font-medium transition duration-300 whitespace-nowrap"
+                            >
+                                {{ $item['label'] }}
+                                <svg class="h-3.5 w-3.5 transition-transform" :class="subOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
 
-                <a
-                    href="/about"
-                    class="{{ request()->is('about') ? 'bg-[#111111] text-white shadow-sm' : 'text-gray-700 hover:text-black' }} rounded-full px-5 py-2.5 text-sm font-medium transition duration-300"
-                >
-                    About
-                </a>
-
-                <a
-                    href="/companies"
-                    class="{{ request()->is('companies') || request()->is('companies/*') ? 'bg-[#111111] text-white shadow-sm' : 'text-gray-700 hover:text-black' }} rounded-full px-5 py-2.5 text-sm font-medium transition duration-300"
-                >
-                    Companies
-                </a>
-
-                <a
-                    href="/contact"
-                    class="{{ request()->is('contact') ? 'bg-[#111111] text-white shadow-sm' : 'text-gray-700 hover:text-black' }} rounded-full px-5 py-2.5 text-sm font-medium transition duration-300"
-                >
-                    Contact
-                </a>
+                            <div
+                                x-show="subOpen"
+                                x-transition:enter="transition ease-out duration-150"
+                                x-transition:enter-start="opacity-0 -translate-y-1"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-cloak
+                                class="absolute left-0 mt-2 w-64 rounded-2xl border border-black/5 bg-white p-2 shadow-lg"
+                            >
+                                @foreach ($item['children'] as $child)
+                                    <a
+                                        href="{{ ($child['external'] ?? false) ? $child['url'] : route($child['route']) }}"
+                                        @if ($child['external'] ?? false) target="_blank" rel="noopener noreferrer" @endif
+                                        class="block rounded-xl px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--brand-bg)] hover:text-[var(--accent)] transition"
+                                    >
+                                        {{ $child['label'] }}
+                                        @if ($child['external'] ?? false)
+                                            <span class="text-gray-400">↗</span>
+                                        @endif
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <a
+                            href="{{ route($item['route']) }}"
+                            class="{{ request()->routeIs($item['route']) ? 'bg-[var(--accent)] text-white shadow-sm' : 'text-gray-700 hover:text-[var(--accent)]' }} rounded-full px-3.5 py-2 text-sm font-medium transition duration-300 whitespace-nowrap"
+                        >
+                            {{ $item['label'] }}
+                        </a>
+                    @endif
+                @endforeach
             </nav>
 
-            <a
-                href="/contact"
-                class="hidden md:inline-flex items-center rounded-full bg-[#111111] px-5 py-3 text-sm font-medium text-white shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-0.5 hover:bg-black"
-            >
-                Get in touch
-            </a>
+            <div class="hidden md:flex items-center gap-3">
+                @isset($brand['secondary'])
+                    <a href="{{ route($brand['secondary']['route']) }}" class="text-sm font-medium text-gray-600 hover:text-[var(--accent)] transition whitespace-nowrap">
+                        {{ $brand['secondary']['label'] }}
+                    </a>
+                @endisset
+
+                <a
+                    href="{{ isset($brand['cta']['url']) ? $brand['cta']['url'] : route($brand['cta']['route']) }}"
+                    @if (isset($brand['cta']['url'])) target="_blank" rel="noopener noreferrer" @endif
+                    class="inline-flex items-center rounded-full bg-[var(--accent)] px-5 py-3 text-sm font-medium text-white shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-0.5 whitespace-nowrap"
+                >
+                    {{ $brand['cta']['label'] }}
+                </a>
+            </div>
 
             <button
                 type="button"
@@ -88,39 +119,40 @@
         >
             <div class="rounded-3xl border border-black/5 bg-white/80 p-3 shadow-lg backdrop-blur-xl">
                 <nav class="flex flex-col gap-1">
-                    <a
-                        href="/"
-                        class="{{ request()->is('/') ? 'bg-[#111111] text-white' : 'text-gray-700 hover:bg-black/[0.04] hover:text-black' }} rounded-2xl px-4 py-3 text-sm font-medium transition"
-                    >
-                        Home
-                    </a>
+                    @foreach ($brand['nav'] as $item)
+                        @if (isset($item['children']))
+                            <div class="px-4 pt-3 pb-1 text-xs uppercase tracking-wider text-gray-400">{{ $item['label'] }}</div>
+                            @foreach ($item['children'] as $child)
+                                <a
+                                    href="{{ ($child['external'] ?? false) ? $child['url'] : route($child['route']) }}"
+                                    @if ($child['external'] ?? false) target="_blank" rel="noopener noreferrer" @endif
+                                    class="text-gray-700 hover:bg-black/[0.04] hover:text-[var(--accent)] rounded-2xl px-4 py-3 text-sm font-medium transition"
+                                >
+                                    {{ $child['label'] }}
+                                </a>
+                            @endforeach
+                        @else
+                            <a
+                                href="{{ route($item['route']) }}"
+                                class="{{ request()->routeIs($item['route']) ? 'bg-[var(--accent)] text-white' : 'text-gray-700 hover:bg-black/[0.04] hover:text-[var(--accent)]' }} rounded-2xl px-4 py-3 text-sm font-medium transition"
+                            >
+                                {{ $item['label'] }}
+                            </a>
+                        @endif
+                    @endforeach
+
+                    @isset($brand['secondary'])
+                        <a href="{{ route($brand['secondary']['route']) }}" class="mt-2 text-center text-sm font-medium text-gray-600 hover:text-[var(--accent)] transition px-4 py-2">
+                            {{ $brand['secondary']['label'] }}
+                        </a>
+                    @endisset
 
                     <a
-                        href="/about"
-                        class="{{ request()->is('about') ? 'bg-[#111111] text-white' : 'text-gray-700 hover:bg-black/[0.04] hover:text-black' }} rounded-2xl px-4 py-3 text-sm font-medium transition"
+                        href="{{ isset($brand['cta']['url']) ? $brand['cta']['url'] : route($brand['cta']['route']) }}"
+                        @if (isset($brand['cta']['url'])) target="_blank" rel="noopener noreferrer" @endif
+                        class="inline-flex items-center justify-center rounded-2xl bg-[var(--accent)] px-5 py-3 text-sm font-medium text-white shadow-lg shadow-black/10 transition duration-300"
                     >
-                        About
-                    </a>
-
-                    <a
-                        href="/companies"
-                        class="{{ request()->is('companies') || request()->is('companies/*') ? 'bg-[#111111] text-white' : 'text-gray-700 hover:bg-black/[0.04] hover:text-black' }} rounded-2xl px-4 py-3 text-sm font-medium transition"
-                    >
-                        Companies
-                    </a>
-
-                    <a
-                        href="/contact"
-                        class="{{ request()->is('contact') ? 'bg-[#111111] text-white' : 'text-gray-700 hover:bg-black/[0.04] hover:text-black' }} rounded-2xl px-4 py-3 text-sm font-medium transition"
-                    >
-                        Contact
-                    </a>
-
-                    <a
-                        href="/contact"
-                        class="mt-2 inline-flex items-center justify-center rounded-2xl bg-[#111111] px-5 py-3 text-sm font-medium text-white shadow-lg shadow-black/10 transition duration-300"
-                    >
-                        Get in touch
+                        {{ $brand['cta']['label'] }}
                     </a>
                 </nav>
             </div>

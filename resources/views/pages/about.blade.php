@@ -15,7 +15,7 @@
             <div class="grid lg:grid-cols-2 gap-16 items-center">
                 <div>
                     <div class="inline-flex items-center rounded-full border border-black/10 bg-white/80 backdrop-blur px-4 py-2 mb-6 shadow-sm">
-                        <span class="mr-3 h-2 w-2 rounded-full bg-orange-500"></span>
+                        <span class="mr-3 h-2 w-2 rounded-full bg-[var(--accent)]"></span>
                         <p class="text-[11px] font-medium uppercase tracking-[0.28em] text-gray-600 md:text-xs">
                             About Mashariki Group
                         </p>
@@ -113,8 +113,8 @@
                 <div class="lg:col-span-7">
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="rounded-3xl border border-gray-100 bg-[#fafafa] p-8 shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(0,0,0,0.06)]">
-                            <div class="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center mb-6">
-                                <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-14 h-14 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center mb-6">
+                                <svg class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7h18M6 12h12M10 17h4"/>
                                 </svg>
                             </div>
@@ -209,7 +209,7 @@
 
     <section class="relative overflow-hidden bg-[#0f0f11] py-24 text-white md:py-28">
         <div class="absolute inset-0">
-            <div class="absolute left-0 top-0 h-72 w-72 rounded-full bg-orange-500/10 blur-3xl"></div>
+            <div class="absolute left-0 top-0 h-72 w-72 rounded-full bg-[var(--accent)]/10 blur-3xl"></div>
             <div class="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-purple-500/10 blur-3xl"></div>
         </div>
 
@@ -293,7 +293,7 @@
 
                 <a href="https://masharikiacademy.org/" target="_blank" rel="noopener noreferrer"
                    class="group rounded-3xl bg-white p-8 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(0,0,0,0.06)]">
-                    <img src="{{ asset('images/masharikiacademy_black.png') }}" alt="Mashariki Academy" class="h-16 mx-auto object-contain grayscale group-hover:grayscale-0 transition duration-300">
+                    <img src="{{ asset('images/masharikiacademy_black.png') }}" alt="Mashariki Arts Academy" class="h-16 mx-auto object-contain grayscale group-hover:grayscale-0 transition duration-300">
                 </a>
 
                 <div class="group rounded-3xl bg-white p-8 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(0,0,0,0.06)]">
@@ -306,5 +306,7 @@
             </div>
         </div>
     </section>
+
+    @include('partials.footer')
 
 @endsection

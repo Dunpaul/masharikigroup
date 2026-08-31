@@ -39,7 +39,7 @@
             <div class="grid lg:grid-cols-[620px_1fr] min-h-[100svh] items-center">
                 <div class="py-20 lg:py-24">
                     <div class="inline-flex items-center gap-3 rounded-full border border-black/10 bg-white/70 backdrop-blur px-5 py-2.5 mb-8 shadow-sm">
-                        <span class="h-2.5 w-2.5 rounded-full bg-orange-500"></span>
+                        <span class="h-2.5 w-2.5 rounded-full bg-[var(--accent)]"></span>
                         <span class="text-[11px] md:text-xs tracking-[0.26em] uppercase text-gray-600 font-medium">
                             Mashariki Group
                         </span>
@@ -59,19 +59,90 @@
                     </p>
 
                     <div class="mt-10 flex items-center gap-4">
-                        <a href="{{ route('companies') }}"
+                        <a href="#portfolio"
                            class="inline-flex items-center rounded-2xl bg-[#111111] px-7 py-4 text-white font-medium shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-0.5 hover:bg-black">
-                            Our Portfolio
+                            Explore Our Portfolio
                         </a>
 
-                        <a href="{{ route('companies') }}"
+                        <a href="#portfolio"
                            class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#111111] text-white shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-0.5 hover:bg-black">
-                            →
+                            ↓
                         </a>
                     </div>
                 </div>
 
                 <div class="hidden lg:block"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PORTFOLIO -->
+    <section id="portfolio" class="py-24 md:py-32 bg-[#fafafa]">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="max-w-2xl mb-16">
+                <p class="uppercase tracking-[0.28em] text-xs text-gray-500 mb-5">Our Portfolio</p>
+                <h2 class="text-4xl md:text-5xl font-light tracking-tight text-[#111111]">
+                    Three brands, one mission — pick where you want to go
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Academy -->
+                <a href="{{ route('academy.home') }}" class="group flex flex-col rounded-[2rem] overflow-hidden bg-white border border-gray-100 shadow-[0_10px_30px_rgba(0,0,0,0.04)] transition duration-300 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
+                    <div class="h-56 overflow-hidden">
+                        <img src="{{ asset('academy/images/25_workshop1.jpg') }}" alt="Mashariki Arts Academy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-8 flex flex-col flex-grow">
+                        <h3 class="text-2xl font-semibold text-[#111111] mb-3">Mashariki Arts Academy</h3>
+                        <p class="text-gray-600 leading-7 mb-8 flex-grow">
+                            Hands-on film and creative training in Kigali, for aspiring African filmmakers, editors, and creative entrepreneurs who want to work in the industry.
+                        </p>
+                        <div class="flex items-center justify-between pt-6 border-t border-gray-100">
+                            <span class="text-sm font-medium text-[#111111] transition group-hover:translate-x-1">Visit the Academy</span>
+                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[var(--accent)] transition group-hover:bg-[var(--accent)]/20">→</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Masharket -->
+                <a href="{{ route('market.home') }}" class="group flex flex-col rounded-[2rem] overflow-hidden bg-white border border-gray-100 shadow-[0_10px_30px_rgba(0,0,0,0.04)] transition duration-300 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
+                    <div class="h-56 overflow-hidden">
+                        <img src="{{ asset('storage/gallery/market/full/bf05a997-66ad-436d-9f1f-efed253aa60c.webp') }}" alt="Masharket" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-8 flex flex-col flex-grow">
+                        <h3 class="text-2xl font-semibold text-[#111111] mb-3">Masharket</h3>
+                        <p class="text-gray-600 leading-7 mb-8 flex-grow">
+                            Rwanda's first content market, for producers, buyers, and distributors who come to Kigali to trade film and media content face to face.
+                        </p>
+                        <div class="flex items-center justify-between pt-6 border-t border-gray-100">
+                            <span class="text-sm font-medium text-[#111111] transition group-hover:translate-x-1">Visit Masharket</span>
+                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[var(--accent)] transition group-hover:bg-[var(--accent)]/20">→</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Festival: now a staged brand in this app (see config/brands.php) — internal link, not the old external WP site. Still not public; staging only. -->
+                <a href="{{ route('festival.home') }}" class="group flex flex-col rounded-[2rem] overflow-hidden bg-[#111111] border border-gray-100 shadow-[0_10px_30px_rgba(0,0,0,0.04)] transition duration-300 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
+                    <div class="h-56 flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+                        <img src="{{ asset('images/masharikifilmfestival.png') }}" alt="Mashariki African Film Festival" class="max-h-20 w-auto object-contain">
+                    </div>
+                    <div class="p-8 flex flex-col flex-grow">
+                        <h3 class="text-2xl font-semibold text-white mb-3">Mashariki African Film Festival</h3>
+                        <p class="text-gray-400 leading-7 mb-8 flex-grow">
+                            The annual Mashariki African Film Festival (MAAFF), for film lovers and industry guests attending screenings, panels, and premieres each year in Kigali.
+                        </p>
+                        <div class="flex items-center justify-between pt-6 border-t border-white/10">
+                            <span class="text-sm font-medium text-white transition group-hover:translate-x-1">Visit the Festival</span>
+                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition group-hover:bg-white/20">→</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="mt-12 text-center">
+                <a href="{{ route('companies') }}" class="text-sm font-medium text-gray-600 hover:text-[var(--accent)] transition">
+                    See the full company directory →
+                </a>
             </div>
         </div>
     </section>
@@ -99,8 +170,8 @@
                 <div class="lg:col-span-7">
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="rounded-3xl border border-gray-100 bg-[#fafafa] p-8 shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(0,0,0,0.06)]">
-                            <div class="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center mb-6">
-                                <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-14 h-14 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center mb-6">
+                                <svg class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7h18M6 12h12M10 17h4"/>
                                 </svg>
                             </div>
@@ -193,10 +264,6 @@
         </div>
     </section>
 
-    <!-- PHILOSOPHY -->
-
-    <!-- COMPANIES -->
-
     <!-- CONTACT -->
     <section id="contact" class="py-24 md:py-32 bg-white">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
@@ -210,7 +277,7 @@
                         WE'D LOVE TO HEAR FROM YOU
                     </h3>
 
-                    <h2 class="text-5xl md:text-6xl lg:text-7xl text-orange-500 font-semibold tracking-tight mt-2">
+                    <h2 class="text-5xl md:text-6xl lg:text-7xl text-[var(--accent)] font-semibold tracking-tight mt-2">
                         GET IN TOUCH
                     </h2>
 
@@ -251,5 +318,23 @@
             </div>
         </div>
     </section>
+
+    @if ($partners->isNotEmpty())
+        <section class="py-16 bg-[var(--brand-bg)]">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                <h2 class="text-2xl font-medium text-center text-[#111111] mb-10">Our Partners</h2>
+                <div class="flex flex-wrap items-center justify-center gap-10">
+                    @foreach ($partners as $partner)
+                        <img src="{{ asset('storage/'.$partner->logo_path) }}" alt="{{ $partner->name }}" class="h-14 object-contain grayscale hover:grayscale-0 transition">
+                    @endforeach
+                </div>
+                <p class="text-center mt-8">
+                    <a href="{{ route('partners') }}" class="text-sm font-medium text-gray-600 hover:text-[var(--accent)] transition">See all partners →</a>
+                </p>
+            </div>
+        </section>
+    @endif
+
+    @include('partials.footer')
 
 @endsection
