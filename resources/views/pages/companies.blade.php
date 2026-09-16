@@ -4,35 +4,36 @@
 
     @include('partials.navbar')
 
-    <section class="relative overflow-hidden bg-[#f6f7f9] py-28">
-        @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
-        @unless ($hasHero)
+    @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
+    <section @class(['relative overflow-hidden bg-[#f6f7f9] py-28', 'min-h-screen flex items-center' => $hasHero])>
+        @if ($hasHero)
+            @include('partials.page-hero')
+            <div class="absolute inset-0 bg-black/60"></div>
+        @else
             <!-- subtle background glow -->
             <div class="absolute top-10 left-20 h-72 w-72 rounded-full bg-orange-200/30 blur-3xl"></div>
             <div class="absolute bottom-0 right-10 h-72 w-72 rounded-full bg-purple-200/30 blur-3xl"></div>
-        @endunless
+        @endif
 
+        <div class="relative z-10 w-full max-w-3xl mx-auto px-6 lg:px-8 text-center">
+            <p class="uppercase tracking-[0.25em] text-sm mb-5 {{ $hasHero ? 'text-white/80' : 'text-gray-500' }}">
+                Our Portfolio
+            </p>
+
+            <h1 class="text-5xl md:text-6xl font-semibold tracking-tight mb-6 {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">
+                The Mashariki Companies
+            </h1>
+
+            <p class="text-lg leading-8 {{ $hasHero ? 'text-white/90' : 'text-gray-600' }}">
+                Mashariki Group oversees companies operating across creative education,
+                digital commerce, cultural programming, and innovation.
+            </p>
+        </div>
+    </section>
+
+    <section class="py-20 bg-[#f6f7f9]">
         <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
-            <div @class(['relative max-w-3xl mx-auto text-center', 'overflow-hidden rounded-3xl py-16 px-6' => $hasHero])>
-                @if ($hasHero)
-                    @include('partials.page-hero')
-                    <div class="absolute inset-0 bg-black/60"></div>
-                @endif
-                <p class="relative z-10 uppercase tracking-[0.25em] text-sm mb-5 {{ $hasHero ? 'text-white/80' : 'text-gray-500' }}">
-                    Our Portfolio
-                </p>
-
-                <h1 class="relative z-10 text-5xl md:text-6xl font-semibold tracking-tight mb-6 {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">
-                    The Mashariki Companies
-                </h1>
-
-                <p class="relative z-10 text-lg leading-8 {{ $hasHero ? 'text-white/90' : 'text-gray-600' }}">
-                    Mashariki Group oversees companies operating across creative education,
-                    digital commerce, cultural programming, and innovation.
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 mt-20">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
 
                 <!-- Academy -->
                 <a href="{{ route('academy.home') }}"

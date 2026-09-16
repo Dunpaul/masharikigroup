@@ -6,18 +6,20 @@
 
     @include('partials.navbar')
 
+    @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
+    <section @class(['relative overflow-hidden bg-white flex items-center justify-center text-center px-6', 'min-h-screen' => $hasHero, 'py-16 md:py-24' => ! $hasHero])>
+        @include('partials.page-hero')
+        @if ($hasHero)
+            <div class="absolute inset-0 bg-black/60"></div>
+        @endif
+        <div class="relative z-10">
+            <h1 class="text-3xl md:text-4xl font-medium mb-4 {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">Event Schedule</h1>
+            <p class="{{ $hasHero ? 'text-white/90' : 'text-gray-500' }}">Program is subject to change.</p>
+        </div>
+    </section>
+
     <section class="py-16 md:py-24 bg-white" x-data="{ activeDay: {{ $sessions->keys()->first() ?? 1 }} }">
         <div class="max-w-4xl mx-auto px-6 lg:px-8">
-            @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
-            <div @class(['relative text-center mb-10', 'overflow-hidden rounded-3xl py-16 px-6' => $hasHero])>
-                @if ($hasHero)
-                    @include('partials.page-hero')
-                    <div class="absolute inset-0 bg-black/60"></div>
-                @endif
-                <h1 class="relative z-10 text-3xl md:text-4xl font-medium mb-4 {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">Event Schedule</h1>
-                <p class="relative z-10 {{ $hasHero ? 'text-white/90' : 'text-gray-500' }}">Program is subject to change.</p>
-            </div>
-
             <div class="flex justify-center gap-2 mb-12 flex-wrap">
                 @foreach ($sessions->keys() as $dayNumber)
                     <button

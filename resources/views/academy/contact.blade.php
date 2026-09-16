@@ -148,7 +148,7 @@
     </style>
 
     <!-- Hero Section -->
-    <section class="relative bg-gray-900 text-white overflow-hidden min-h-[70vh] flex items-center">
+    <section class="relative bg-gray-900 text-white overflow-hidden min-h-screen flex items-center">
         <div class="absolute inset-0">
             <img src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1600&q=80" alt="Contact" class="w-full h-full object-cover opacity-30">
             @include('partials.page-hero')

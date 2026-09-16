@@ -8,12 +8,12 @@
 
     <!-- HERO -->
     @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
-    <section class="relative overflow-hidden py-20 md:py-28 bg-white">
+    <section @class(['relative overflow-hidden py-20 md:py-28 bg-white', 'min-h-screen flex items-center' => $hasHero])>
         @include('partials.page-hero')
         @if ($hasHero)
             <div class="absolute inset-0 bg-black/60"></div>
         @endif
-        <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-[1fr_360px] gap-12 items-start">
+        <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-[1fr_360px] gap-12 items-start">
             <div>
                 <h1 class="text-4xl md:text-6xl font-medium leading-[1.05] tracking-tight mb-6 max-w-2xl {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">
                     Revolutionizing the Content Ecosystem

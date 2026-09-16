@@ -6,27 +6,29 @@
 
     @include('partials.navbar')
 
+    @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
+    <section @class(['relative overflow-hidden bg-white flex items-center justify-center text-center px-6', 'min-h-screen' => $hasHero, 'py-16 md:py-24' => ! $hasHero])>
+        @include('partials.page-hero')
+        @if ($hasHero)
+            <div class="absolute inset-0 bg-black/60"></div>
+        @endif
+        <div class="relative z-10">
+            <div class="inline-flex items-center gap-3 rounded-full border border-black/10 bg-[var(--brand-bg)] px-5 py-2.5 mb-6">
+                <span class="h-2.5 w-2.5 rounded-full bg-[var(--accent)]"></span>
+                <span class="text-[11px] md:text-xs tracking-[0.26em] uppercase text-gray-600 font-medium">Free &amp; Open to the Public</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-medium mb-4 {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">Plan Your Visit</h1>
+            <p class="max-w-xl mx-auto {{ $hasHero ? 'text-white/90' : 'text-gray-600' }}">
+                {{ $brand['acronym'] }} is free to attend — no tickets, no registration. Just show up.
+                @if ($edition?->start_date && $edition?->end_date)
+                    This year's festival runs {{ $edition->start_date->format('F jS') }}–{{ $edition->end_date->format('jS, Y') }}.
+                @endif
+            </p>
+        </div>
+    </section>
+
     <section class="py-16 md:py-24 bg-white">
         <div class="max-w-4xl mx-auto px-6 lg:px-8">
-            @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
-            <div @class(['relative text-center mb-16', 'overflow-hidden rounded-3xl py-16 px-6' => $hasHero])>
-                @if ($hasHero)
-                    @include('partials.page-hero')
-                    <div class="absolute inset-0 bg-black/60"></div>
-                @endif
-                <div class="relative z-10 inline-flex items-center gap-3 rounded-full border border-black/10 bg-[var(--brand-bg)] px-5 py-2.5 mb-6">
-                    <span class="h-2.5 w-2.5 rounded-full bg-[var(--accent)]"></span>
-                    <span class="text-[11px] md:text-xs tracking-[0.26em] uppercase text-gray-600 font-medium">Free &amp; Open to the Public</span>
-                </div>
-                <h1 class="relative z-10 text-3xl md:text-4xl font-medium mb-4 {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">Plan Your Visit</h1>
-                <p class="relative z-10 max-w-xl mx-auto {{ $hasHero ? 'text-white/90' : 'text-gray-600' }}">
-                    {{ $brand['acronym'] }} is free to attend — no tickets, no registration. Just show up.
-                    @if ($edition?->start_date && $edition?->end_date)
-                        This year's festival runs {{ $edition->start_date->format('F jS') }}–{{ $edition->end_date->format('jS, Y') }}.
-                    @endif
-                </p>
-            </div>
-
             <div class="grid md:grid-cols-2 gap-8 mb-16">
                 <a href="{{ route('festival.schedule') }}" class="group rounded-2xl border border-black/10 p-8 hover:-translate-y-0.5 transition duration-300">
                     <h2 class="text-xl font-medium text-[#111111] mb-2 group-hover:text-[var(--accent)] transition">See the Schedule →</h2>

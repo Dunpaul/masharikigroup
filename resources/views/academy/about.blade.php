@@ -157,7 +157,7 @@
         }
     </style>
     <!-- Hero Section with Image -->
-    <section class="relative bg-gray-900 text-white overflow-hidden min-h-[70vh] flex items-center">
+    <section class="relative bg-gray-900 text-white overflow-hidden min-h-screen flex items-center">
         <div class="absolute inset-0">
             <img src="{{ asset('academy/images/workshop9.jpg') }}" alt="Team collaboration" class="w-full h-full object-cover opacity-30">
             @include('partials.page-hero')

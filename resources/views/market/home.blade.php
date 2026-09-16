@@ -6,12 +6,12 @@
 
     <!-- HERO -->
     @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
-    <section class="relative overflow-hidden py-20 md:py-28 bg-white">
+    <section @class(['relative overflow-hidden py-20 md:py-28 bg-white', 'min-h-screen flex items-center' => $hasHero])>
         @include('partials.page-hero')
         @if ($hasHero)
             <div class="absolute inset-0 bg-black/60"></div>
         @endif
-        <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-[1fr_360px] gap-12 items-start">
+        <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-[1fr_360px] gap-12 items-start">
             <div>
                 <div class="inline-flex items-center gap-3 rounded-full border border-black/10 bg-[var(--brand-bg)] px-5 py-2.5 mb-8">
                     <span class="h-2.5 w-2.5 rounded-full bg-[var(--brand-accent)]"></span>

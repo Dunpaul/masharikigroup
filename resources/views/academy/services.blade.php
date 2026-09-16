@@ -116,7 +116,7 @@
     </style>
 
     <!-- Hero with early CTA -->
-    <section class="relative bg-gray-900 text-white overflow-hidden min-h-[80vh] flex items-center">
+    <section class="relative bg-gray-900 text-white overflow-hidden min-h-screen flex items-center">
         <div class="absolute inset-0">
             <img src="{{ asset('academy/images/25_workshop1.jpg') }}" alt="Students learning" class="w-full h-full object-cover opacity-30">
             @include('partials.page-hero')
