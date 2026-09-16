@@ -22,7 +22,7 @@
                 @endif
 
                 <div class="mt-8 flex flex-wrap gap-4">
-                    <a href="#categories" class="inline-flex items-center rounded-2xl bg-[var(--brand-primary)] px-7 py-4 text-white font-medium shadow-lg transition duration-300 hover:-translate-y-0.5">
+                    <a href="#categories" class="inline-flex items-center rounded-2xl bg-[var(--brand-accent)] px-7 py-4 text-white font-medium shadow-lg transition duration-300 hover:-translate-y-0.5">
                         Register Now
                     </a>
                 </div>
@@ -76,7 +76,7 @@
                         <div class="text-center">
                             <a
                                 href="{{ $category->cta_url ?? '#' }}"
-                                class="inline-flex items-center rounded-full bg-[var(--brand-accent)] px-6 py-3 text-[#111111] font-semibold shadow-sm transition duration-300 hover:-translate-y-0.5"
+                                class="inline-flex items-center rounded-full bg-[var(--brand-accent)] px-6 py-3 text-white font-semibold shadow-sm transition duration-300 hover:-translate-y-0.5"
                             >
                                 {{ $category->cta_label }}
                             </a>

@@ -74,6 +74,8 @@ return [
         'tagline' => "Empowering Africa's Next Generation of Storytellers",
         'description' => 'Mashariki Arts Academy is a professional film and creative training institution dedicated to nurturing Africa\'s next generation of storytellers.',
         'host' => env('BRAND_ACADEMY_HOST', 'mashariki-academy.test'),
+        // Navbar logo: 'wordmark' replaces the text lockup, 'icon' sits beside it.
+        'logo' => ['src' => 'images/masharikiacademy_black.png', 'type' => 'wordmark'],
         'colors' => [
             'primary' => '#111111',
             'accent' => '#7c3aed',
@@ -109,9 +111,12 @@ return [
         'tagline' => 'Connecting African Creatives Through Commerce & Culture',
         'description' => 'Masharket is a digital marketplace connecting African creatives, entrepreneurs and consumers through commerce, storytelling and culture-driven products.',
         'host' => env('BRAND_MARKET_HOST', 'masharket.test'),
+        'logo' => ['src' => 'images/masharket.svg', 'type' => 'icon', 'prefix' => 'Masharket', 'text' => 'Content Market'],
+        // Accent matches the navbar "Register" CTA (shared group orange, #f97316)
+        // instead of the old #f9d200 yellow, which clashed with the current logo.
         'colors' => [
             'primary' => '#111111',
-            'accent' => '#f9d200',
+            'accent' => '#f97316',
             'bg' => '#f4f7fb',
         ],
         'nav' => [
@@ -180,6 +185,7 @@ return [
         'tagline' => "Africa's Stories, On Screen",
         'description' => 'The Mashariki African Film Festival (MAAFF) is an annual celebration of African cinema in Kigali, Rwanda — screenings, panels, masterclasses, and premieres.',
         'host' => env('BRAND_FESTIVAL_HOST', 'mashariki-festival.test'),
+        'logo' => ['src' => 'images/masharikifilmfestival.png', 'type' => 'icon'],
         'colors' => [
             'primary' => '#111111',
             'accent' => '#dc2626',

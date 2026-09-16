@@ -41,7 +41,11 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            // No 'url' key: each Mashariki brand is served from its own domain, so a
+            // single APP_URL can't produce a correct absolute URL for every brand.
+            // Without 'url', Storage::disk('public')->url() returns a root-relative
+            // '/storage/...' path, which resolves against whichever brand domain the
+            // request came in on (same behavior the asset() helper already uses).
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

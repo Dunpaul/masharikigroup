@@ -6,18 +6,47 @@
         <div class="flex h-20 items-center justify-between">
 
             <a href="{{ route($brand['nav'][0]['route']) }}" class="group inline-flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-xl border border-black/15 bg-white/70 text-sm font-semibold text-black shadow-sm transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-md">
-                    {{ strtoupper(substr($brand['short_name'], 0, 1)) }}
-                </div>
+                @php $logo = $brand['logo'] ?? null; @endphp
 
-                <div class="flex flex-col leading-none">
-                    <span class="text-[11px] uppercase tracking-[0.28em] text-gray-500">
-                        Mashariki
-                    </span>
-                    <span class="text-base md:text-lg font-semibold tracking-[0.18em] text-[#111111]">
-                        {{ strtoupper($brand['short_name']) }}
-                    </span>
-                </div>
+                @if ($logo && ($logo['type'] ?? 'wordmark') === 'wordmark')
+                    {{-- Full logo replaces the text lockup entirely --}}
+                    <img
+                        src="{{ asset($logo['src']) }}"
+                        alt="{{ $brand['name'] }}"
+                        class="h-10 md:h-11 w-auto object-contain transition duration-300 group-hover:-translate-y-0.5"
+                    >
+                @elseif ($logo && ($logo['type'] ?? 'wordmark') === 'icon')
+                    {{-- Icon sits beside the text lockup --}}
+                    <img
+                        src="{{ asset($logo['src']) }}"
+                        alt="{{ $brand['name'] }}"
+                        class="h-11 w-11 object-contain transition duration-300 group-hover:-translate-y-0.5"
+                    >
+                    <div class="flex flex-col leading-none">
+                        @if ($logo['show_prefix'] ?? true)
+                            <span class="text-[11px] uppercase tracking-[0.28em] text-gray-500">
+                                {{ $logo['prefix'] ?? 'Mashariki' }}
+                            </span>
+                        @endif
+                        <span class="text-base md:text-lg font-semibold tracking-[0.18em] text-[#111111]">
+                            {{ strtoupper($logo['text'] ?? $brand['short_name']) }}
+                        </span>
+                    </div>
+                @else
+                    {{-- Fallback: letter-box + text wordmark --}}
+                    <div class="flex h-11 w-11 items-center justify-center rounded-xl border border-black/15 bg-white/70 text-sm font-semibold text-black shadow-sm transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-md">
+                        {{ strtoupper(substr($brand['short_name'], 0, 1)) }}
+                    </div>
+
+                    <div class="flex flex-col leading-none">
+                        <span class="text-[11px] uppercase tracking-[0.28em] text-gray-500">
+                            Mashariki
+                        </span>
+                        <span class="text-base md:text-lg font-semibold tracking-[0.18em] text-[#111111]">
+                            {{ strtoupper($brand['short_name']) }}
+                        </span>
+                    </div>
+                @endif
             </a>
 
             <nav class="hidden md:flex items-center gap-1 flex-wrap justify-end rounded-full border border-black/5 bg-white/60 px-3 py-2 shadow-sm backdrop-blur max-w-2xl">

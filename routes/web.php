@@ -31,7 +31,6 @@ use Illuminate\Support\Facades\Route;
 | dev, point these hosts at 127.0.0.1 in /etc/hosts (see README).
 |
 */
-
 Route::domain(config('brands.group.host'))->middleware('brand:group')->group(function () {
     Route::get('/', [GroupController::class, 'home'])->name('home');
     Route::view('/about', 'pages.about')->name('about');
