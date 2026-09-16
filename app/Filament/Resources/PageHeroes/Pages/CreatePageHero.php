@@ -29,7 +29,7 @@ class CreatePageHero extends CreateRecord
         }
 
         $processor = app(GalleryImageProcessor::class);
-        $nextSort = (int) (PageHero::forPage($data['brand'], $data['page_key'])->max('sort_order') ?? 0) + 1;
+        $nextSort = (int) (PageHero::ofPage($data['brand'], $data['page_key'])->max('sort_order') ?? 0) + 1;
         $lastRecord = null;
 
         foreach ($rawPaths as $rawPath) {

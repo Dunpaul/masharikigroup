@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MarketSettings;
 use App\Models\VirtualAttendant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -41,16 +42,20 @@ class VirtualAttendantRegistrationController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        $settings = MarketSettings::current();
+
         $registrant = VirtualAttendant::create([
             ...$validated,
             'registration_id' => VirtualAttendant::generateRegistrationId(),
             'payment_status' => 'unpaid',
+            'amount' => $settings->virtual_attendant_fee,
+            'currency' => $settings->fee_currency,
         ]);
 
         try {
             Mail::raw(
                 "Dear {$registrant->company_contact_first_name},\n\n".
-                "Thank you for registering as a virtual attendant for Masharket. Your registration ({$registrant->registration_id}) has been received and is pending payment confirmation. Our team will be in touch with payment instructions.\n\n".
+                "Thank you for registering as a virtual attendant for Masharket. Your registration reference is {$registrant->registration_id}. You'll now be redirected to complete payment.\n\n".
                 'Masharket Team',
                 function ($message) use ($registrant) {
                     $message->to($registrant->company_contact_email)
@@ -61,8 +66,6 @@ class VirtualAttendantRegistrationController extends Controller
             Log::warning('Virtual attendant confirmation email failed', ['error' => $e->getMessage()]);
         }
 
-        $ticketUrl = route('market.ticket.show', ['type' => 'virtual_attendant', 'registrationId' => $registrant->registration_id]);
-
-        return back()->with('success', "Registration received! Your reference is {$registrant->registration_id}. We'll be in touch with payment details. Once confirmed as paid, your ticket will be available at: {$ticketUrl}");
+        return redirect()->route('market.payments.initiate', ['type' => 'virtual_attendant', 'registrationId' => $registrant->registration_id]);
     }
 }

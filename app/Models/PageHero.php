@@ -33,7 +33,15 @@ class PageHero extends Model
         ];
     }
 
-    public function scopeForPage(Builder $query, string $brand, string $pageKey): Builder
+    /**
+     * Named ofPage(), not forPage() — Eloquent's query builder already has a
+     * built-in forPage($page, $perPage) method used internally by
+     * paginate(). A same-named local scope silently overrides it, so any
+     * paginate() call (e.g. Filament's table) routes its (page, perPage)
+     * arguments into this scope's (brand, pageKey) params instead of doing
+     * pagination, breaking every paginated listing of this model.
+     */
+    public function scopeOfPage(Builder $query, string $brand, string $pageKey): Builder
     {
         return $query->where('brand', $brand)->where('page_key', $pageKey);
     }

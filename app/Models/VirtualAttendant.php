@@ -30,6 +30,11 @@ class VirtualAttendant extends Model
         'company_products_other',
         'password',
         'payment_status',
+        'amount',
+        'currency',
+        'payment_reference',
+        'flutterwave_transaction_id',
+        'paid_at',
     ];
 
     protected $hidden = [
@@ -42,6 +47,7 @@ class VirtualAttendant extends Model
             'company_provisions' => 'array',
             'company_products' => 'array',
             'password' => 'hashed',
+            'paid_at' => 'datetime',
         ];
     }
 

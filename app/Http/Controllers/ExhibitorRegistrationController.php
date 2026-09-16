@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exhibitor;
+use App\Models\MarketSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -41,16 +42,20 @@ class ExhibitorRegistrationController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        $settings = MarketSettings::current();
+
         $exhibitor = Exhibitor::create([
             ...$validated,
             'registration_id' => Exhibitor::generateRegistrationId(),
             'payment_status' => 'unpaid',
+            'amount' => $settings->exhibitor_fee,
+            'currency' => $settings->fee_currency,
         ]);
 
         try {
             Mail::raw(
                 "Dear {$exhibitor->company_contact_first_name},\n\n".
-                "Thank you for registering as an exhibitor for Masharket. Your registration ({$exhibitor->registration_id}) has been received and is pending payment confirmation. Our team will be in touch with payment instructions.\n\n".
+                "Thank you for registering as an exhibitor for Masharket. Your registration reference is {$exhibitor->registration_id}. You'll now be redirected to complete payment.\n\n".
                 'Masharket Team',
                 function ($message) use ($exhibitor) {
                     $message->to($exhibitor->company_contact_email)
@@ -61,8 +66,6 @@ class ExhibitorRegistrationController extends Controller
             Log::warning('Exhibitor confirmation email failed', ['error' => $e->getMessage()]);
         }
 
-        $ticketUrl = route('market.ticket.show', ['type' => 'exhibitor', 'registrationId' => $exhibitor->registration_id]);
-
-        return back()->with('success', "Registration received! Your reference is {$exhibitor->registration_id}. We'll be in touch with payment details. Once confirmed as paid, your ticket will be available at: {$ticketUrl}");
+        return redirect()->route('market.payments.initiate', ['type' => 'exhibitor', 'registrationId' => $exhibitor->registration_id]);
     }
 }

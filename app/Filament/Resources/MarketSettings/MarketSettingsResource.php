@@ -8,6 +8,7 @@ use BackedEnum;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Resource;
@@ -62,6 +63,18 @@ class MarketSettingsResource extends Resource
                             ->keyLabel('Network')
                             ->valueLabel('URL')
                             ->helperText('e.g. linkedin, instagram, whatsapp, tiktok, youtube, facebook'),
+                    ]),
+                Section::make('Pricing')
+                    ->description('Registration fees charged via Flutterwave at checkout. Students remain free.')
+                    ->columns(4)
+                    ->components([
+                        TextInput::make('exhibitor_fee')->label('Exhibitor fee')->numeric()->required(),
+                        TextInput::make('non_exhibitor_fee')->label('Non-exhibitor fee')->numeric()->required(),
+                        TextInput::make('virtual_attendant_fee')->label('Virtual attendant fee')->numeric()->required(),
+                        Select::make('fee_currency')
+                            ->label('Currency')
+                            ->options(['RWF' => 'RWF', 'USD' => 'USD'])
+                            ->required(),
                     ]),
             ]);
     }

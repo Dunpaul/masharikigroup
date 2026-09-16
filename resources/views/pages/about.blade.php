@@ -4,7 +4,7 @@
 
     @include('partials.navbar')
 
-    @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
+    @php $hasHero = \App\Models\PageHero::ofPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
     <section @class(['relative overflow-hidden bg-[#f5f6f8] py-24 md:py-32', 'min-h-screen flex items-center' => $hasHero])>
         @include('partials.page-hero')
         @if ($hasHero)

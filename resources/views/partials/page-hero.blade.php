@@ -1,5 +1,5 @@
 @php
-    $__pageHeroes = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())
+    $__pageHeroes = \App\Models\PageHero::ofPage($brand['key'], request()->route()->getName())
         ->active()
         ->orderBy('sort_order')
         ->get();

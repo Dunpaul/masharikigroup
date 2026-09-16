@@ -20,6 +20,10 @@ class MarketSettings extends Model
         'contact_phone_2',
         'contact_email',
         'socials',
+        'exhibitor_fee',
+        'non_exhibitor_fee',
+        'virtual_attendant_fee',
+        'fee_currency',
     ];
 
     protected function casts(): array

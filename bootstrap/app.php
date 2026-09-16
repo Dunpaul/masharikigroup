@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'brand' => \App\Http\Middleware\SetBrand::class,
             'registrant.auth' => \App\Http\Middleware\EnsureRegistrantAuthenticated::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'payments/webhook',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

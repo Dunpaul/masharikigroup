@@ -30,7 +30,7 @@ class PageHeroSeeder extends Seeder
 
     public function run(): void
     {
-        if (PageHero::forPage('academy', 'academy.home')->exists()) {
+        if (PageHero::ofPage('academy', 'academy.home')->exists()) {
             return;
         }
 

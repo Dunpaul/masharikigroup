@@ -11,6 +11,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\MarketSubscriberController;
 use App\Http\Controllers\NonExhibitorRegistrationController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RegistrantAuthController;
 use App\Http\Controllers\RegistrantDashboardController;
 use App\Http\Controllers\StudentRegistrationController;
@@ -89,6 +90,9 @@ Route::domain(config('brands.market.host'))->middleware('brand:market')->group(f
     Route::get('/waiver', [WaiverRedemptionController::class, 'create'])->name('market.waiver.create');
     Route::post('/waiver', [WaiverRedemptionController::class, 'store'])->name('market.waiver.store');
     Route::get('/ticket/{type}/{registrationId}', [TicketController::class, 'show'])->name('market.ticket.show');
+    Route::get('/payments/{type}/{registrationId}/pay', [PaymentController::class, 'initiate'])->name('market.payments.initiate');
+    Route::get('/payments/callback', [PaymentController::class, 'callback'])->name('market.payments.callback');
+    Route::post('/payments/webhook', [PaymentController::class, 'webhook'])->name('market.payments.webhook');
     Route::post('/subscribe', [MarketSubscriberController::class, 'store'])->name('market.subscribe');
 
     Route::get('/login', [RegistrantAuthController::class, 'showLogin'])->name('market.login');

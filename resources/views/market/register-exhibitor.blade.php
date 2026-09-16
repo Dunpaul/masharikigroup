@@ -14,12 +14,18 @@
                     <span class="text-[11px] md:text-xs tracking-[0.26em] uppercase text-gray-600 font-medium">Exhibitor Registration</span>
                 </div>
                 <h1 class="text-3xl md:text-4xl font-medium text-[#111111]">Register as an Exhibitor</h1>
-                <p class="mt-3 text-gray-600">Tell us about your company and we'll be in touch with payment details.</p>
+                <p class="mt-3 text-gray-600">Tell us about your company — you'll be redirected to complete payment right after.</p>
             </div>
 
             @if (session('success'))
                 <div class="mb-8 rounded-xl border border-green-200 bg-green-50 px-6 py-4 text-green-800">
                     {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mb-8 rounded-xl border border-red-200 bg-red-50 px-6 py-4 text-red-800">
+                    {{ session('error') }}
                 </div>
             @endif
 
