@@ -8,9 +8,14 @@
 
     <section class="bg-white py-16 md:py-24">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Apply Now</h1>
-                <p class="text-lg text-gray-600">Fill in the form below to start your application.</p>
+            @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
+            <div @class(['relative text-center mb-12', 'overflow-hidden rounded-3xl py-16 px-6' => $hasHero])>
+                @if ($hasHero)
+                    @include('partials.page-hero')
+                    <div class="absolute inset-0 bg-black/60"></div>
+                @endif
+                <h1 class="relative z-10 text-4xl md:text-5xl font-bold mb-4 {{ $hasHero ? 'text-white' : 'text-gray-900' }}">Apply Now</h1>
+                <p class="relative z-10 {{ $hasHero ? 'text-white/90' : 'text-gray-600' }}">Fill in the form below to start your application.</p>
             </div>
 
             @if (session('success'))

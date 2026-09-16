@@ -160,6 +160,7 @@
     <section class="relative bg-gray-900 text-white overflow-hidden min-h-[70vh] flex items-center">
         <div class="absolute inset-0">
             <img src="{{ asset('academy/images/workshop9.jpg') }}" alt="Team collaboration" class="w-full h-full object-cover opacity-30">
+            @include('partials.page-hero')
             <div class="absolute inset-0 bg-black/30"></div>
         </div>
         <div class="relative max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-24 text-center">

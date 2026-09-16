@@ -6,14 +6,6 @@
 
     @include('partials.navbar')
     <style>
-        .hero-bg-slide {
-            transition: opacity 1.5s ease-in-out;
-            opacity: 0;
-        }
-        .hero-bg-slide.active {
-            opacity: 1;
-        }
-
         /* Enhanced shadows and depth */
         .shadow-elevated {
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -168,39 +160,9 @@
     <!-- Hero Section with Sliding Background Images -->
     <section class="relative bg-gray-900 text-white overflow-hidden min-h-screen flex items-center">
         <!-- Background Image Slider -->
-        <div class="absolute inset-0 hero-bg-slider">
-            <div class="hero-bg-slide active absolute inset-0">
-                <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1600&q=80" alt="Creative workspace" class="w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
-            </div>
-            <div class="hero-bg-slide absolute inset-0">
-                <img src="{{ asset('academy/images/workshop1.jpg') }}" alt="Creative collaboration" class="w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
-            </div>
-            <div class="hero-bg-slide absolute inset-0">
-                <img src="{{ asset('academy/images/workshop10.JPG') }}" alt="Film production" class="w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
-            </div>
-            <div class="hero-bg-slide absolute inset-0">
-                <img src="{{ asset('academy/images/workshop22.jpg') }}" alt="Creative team" class="w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
-            </div>
-            <div class="hero-bg-slide absolute inset-0">
-                <img src="{{ asset('academy/images/workshop13.JPG') }}" alt="Creative team" class="w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
-            </div>
-            <div class="hero-bg-slide absolute inset-0">
-                <img src="{{ asset('academy/images/workshop15.JPG') }}" alt="Creative team" class="w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
-            </div>
-            <div class="hero-bg-slide absolute inset-0">
-                <img src="{{ asset('academy/images/workshop17.JPG') }}" alt="Creative team" class="w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
-            </div>
-            <div class="hero-bg-slide absolute inset-0">
-                <img src="{{ asset('academy/images/workshop8.jpg') }}" alt="Creative team" class="w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
-            </div>
+        <div class="absolute inset-0">
+            @include('partials.page-hero')
+            <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
         </div>
 
         <!-- Animated gradient accent -->
@@ -568,26 +530,6 @@
     </section>
 
     <script>
-        // Hero Background Image Slider
-        let currentHeroBg = 0;
-        const heroBgSlides = document.querySelectorAll('.hero-bg-slide');
-
-        function updateHeroBackground() {
-            heroBgSlides.forEach((slide, index) => {
-                if (index === currentHeroBg) {
-                    slide.classList.add('active');
-                } else {
-                    slide.classList.remove('active');
-                }
-            });
-        }
-
-        // Auto-advance hero background every 5 seconds
-        setInterval(() => {
-            currentHeroBg = (currentHeroBg + 1) % heroBgSlides.length;
-            updateHeroBackground();
-        }, 5000);
-
         // Student Showcase Carousel functionality
         let currentSlide = 0;
         const slides = document.querySelectorAll('.carousel-slide');

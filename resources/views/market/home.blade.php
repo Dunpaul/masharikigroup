@@ -5,20 +5,25 @@
     @include('partials.navbar')
 
     <!-- HERO -->
-    <section class="py-20 md:py-28 bg-white">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-[1fr_360px] gap-12 items-start">
+    @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
+    <section class="relative overflow-hidden py-20 md:py-28 bg-white">
+        @include('partials.page-hero')
+        @if ($hasHero)
+            <div class="absolute inset-0 bg-black/60"></div>
+        @endif
+        <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-[1fr_360px] gap-12 items-start">
             <div>
                 <div class="inline-flex items-center gap-3 rounded-full border border-black/10 bg-[var(--brand-bg)] px-5 py-2.5 mb-8">
                     <span class="h-2.5 w-2.5 rounded-full bg-[var(--brand-accent)]"></span>
                     <span class="text-[11px] md:text-xs tracking-[0.26em] uppercase text-gray-600 font-medium">{{ $settings->event_name }}</span>
                 </div>
 
-                <h1 class="text-4xl md:text-6xl font-medium leading-[1.05] tracking-tight text-[#111111] mb-6 max-w-2xl">
+                <h1 class="text-4xl md:text-6xl font-medium leading-[1.05] tracking-tight mb-6 max-w-2xl {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">
                     Discover the Cinematic Tapestry in Kigali, Rwanda
                 </h1>
 
                 @if ($settings->theme)
-                    <p class="text-lg italic text-gray-700 mb-2">Theme: {{ $settings->theme }}</p>
+                    <p class="text-lg italic mb-2 {{ $hasHero ? 'text-white/90' : 'text-gray-700' }}">Theme: {{ $settings->theme }}</p>
                 @endif
 
                 <div class="mt-8 flex flex-wrap gap-4">

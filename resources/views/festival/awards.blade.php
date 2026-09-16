@@ -8,7 +8,14 @@
 
     <section class="py-16 md:py-24 bg-white">
         <div class="max-w-5xl mx-auto px-6 lg:px-8">
-            <h1 class="text-3xl md:text-4xl font-medium text-[#111111] mb-12 text-center">Juries &amp; Awards</h1>
+            @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
+            <div @class(['relative text-center mb-12', 'overflow-hidden rounded-3xl py-16 px-6' => $hasHero])>
+                @if ($hasHero)
+                    @include('partials.page-hero')
+                    <div class="absolute inset-0 bg-black/60"></div>
+                @endif
+                <h1 class="relative z-10 text-3xl md:text-4xl font-medium {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">Juries &amp; Awards</h1>
+            </div>
 
             @if ($juryMembers->isNotEmpty())
                 <h2 class="text-xl font-medium text-[#111111] mb-6">Jury</h2>

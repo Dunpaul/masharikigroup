@@ -7,13 +7,18 @@
     @include('partials.navbar')
 
     <!-- HERO -->
-    <section class="py-20 md:py-28 bg-white">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-[1fr_360px] gap-12 items-start">
+    @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
+    <section class="relative overflow-hidden py-20 md:py-28 bg-white">
+        @include('partials.page-hero')
+        @if ($hasHero)
+            <div class="absolute inset-0 bg-black/60"></div>
+        @endif
+        <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-[1fr_360px] gap-12 items-start">
             <div>
-                <h1 class="text-4xl md:text-6xl font-medium leading-[1.05] tracking-tight text-[#111111] mb-6 max-w-2xl">
+                <h1 class="text-4xl md:text-6xl font-medium leading-[1.05] tracking-tight mb-6 max-w-2xl {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">
                     Revolutionizing the Content Ecosystem
                 </h1>
-                <p class="text-lg text-gray-700 max-w-2xl">{{ $settings->event_name }}</p>
+                <p class="text-lg max-w-2xl {{ $hasHero ? 'text-white/90' : 'text-gray-700' }}">{{ $settings->event_name }}</p>
             </div>
 
             <div class="rounded-3xl border border-black/10 bg-[var(--brand-bg)] p-6">

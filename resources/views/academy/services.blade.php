@@ -119,6 +119,7 @@
     <section class="relative bg-gray-900 text-white overflow-hidden min-h-[80vh] flex items-center">
         <div class="absolute inset-0">
             <img src="{{ asset('academy/images/25_workshop1.jpg') }}" alt="Students learning" class="w-full h-full object-cover opacity-30">
+            @include('partials.page-hero')
             <div class="absolute inset-0 bg-black/30"></div>
         </div>
         <div class="relative max-w-5xl mx-auto px-4 sm:px-6 py-12 text-center">

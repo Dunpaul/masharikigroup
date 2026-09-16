@@ -4,9 +4,15 @@
 
     @include('partials.navbar')
 
+    @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
     <section class="relative overflow-hidden bg-[#f5f6f8] py-24 md:py-32">
-        <div class="absolute top-0 left-0 h-72 w-72 rounded-full bg-orange-200/30 blur-3xl"></div>
-        <div class="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-purple-200/25 blur-3xl"></div>
+        @include('partials.page-hero')
+        @if ($hasHero)
+            <div class="absolute inset-0 bg-black/60"></div>
+        @else
+            <div class="absolute top-0 left-0 h-72 w-72 rounded-full bg-orange-200/30 blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-purple-200/25 blur-3xl"></div>
+        @endif
 
         <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-14 lg:gap-20 items-start">
@@ -19,14 +25,18 @@
                         </span>
                     </div>
 
-                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.02] text-[#111111] mb-6">
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.02] mb-6 {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">
                         Let’s Build
-                        <span class="block bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+                        <span @class([
+                            'block',
+                            'text-white' => $hasHero,
+                            'bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent' => ! $hasHero,
+                        ])>
                             Something Meaningful
                         </span>
                     </h1>
 
-                    <p class="text-lg md:text-xl text-gray-600 leading-8 max-w-2xl mb-10">
+                    <p class="text-lg md:text-xl leading-8 max-w-2xl mb-10 {{ $hasHero ? 'text-white/90' : 'text-gray-600' }}">
                         Whether you want to partner with us, learn more about our companies, or start a conversation
                         around culture, education, commerce, or creative growth, we’d love to hear from you.
                     </p>

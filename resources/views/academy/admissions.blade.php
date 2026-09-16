@@ -39,6 +39,7 @@
     <section class="relative bg-gray-900 text-white overflow-hidden min-h-[100vh] flex items-center">
         <div class="absolute inset-0">
             <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80" alt="Filmmaking workshop" class="w-full h-full object-cover opacity-50">
+            @include('partials.page-hero')
             <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80"></div>
         </div>
 

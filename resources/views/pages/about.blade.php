@@ -4,12 +4,18 @@
 
     @include('partials.navbar')
 
+    @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
     <section class="relative overflow-hidden bg-[#f5f6f8] py-24 md:py-32">
-        <div class="absolute inset-0">
-            <div class="absolute -top-24 left-0 h-72 w-72 rounded-full bg-orange-200/30 blur-3xl"></div>
-            <div class="absolute right-0 top-20 h-80 w-80 rounded-full bg-pink-200/20 blur-3xl"></div>
-            <div class="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-purple-200/20 blur-3xl"></div>
-        </div>
+        @include('partials.page-hero')
+        @if ($hasHero)
+            <div class="absolute inset-0 bg-black/60"></div>
+        @else
+            <div class="absolute inset-0">
+                <div class="absolute -top-24 left-0 h-72 w-72 rounded-full bg-orange-200/30 blur-3xl"></div>
+                <div class="absolute right-0 top-20 h-80 w-80 rounded-full bg-pink-200/20 blur-3xl"></div>
+                <div class="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-purple-200/20 blur-3xl"></div>
+            </div>
+        @endif
 
         <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-16 items-center">
@@ -21,19 +27,23 @@
                         </p>
                     </div>
 
-                    <h1 class="mb-8 text-5xl font-semibold leading-[1.02] tracking-tight text-[#111111] md:text-6xl lg:text-7xl">
+                    <h1 class="mb-8 text-5xl font-semibold leading-[1.02] tracking-tight md:text-6xl lg:text-7xl {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">
                         Building African Brands
-                        <span class="mt-2 block bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+                        <span @class([
+                            'mt-2 block',
+                            'text-white' => $hasHero,
+                            'bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent' => ! $hasHero,
+                        ])>
                             That Move Culture Forward
                         </span>
                     </h1>
 
-                    <p class="mb-6 max-w-2xl text-lg leading-8 text-gray-600 md:text-xl">
+                    <p class="mb-6 max-w-2xl text-lg leading-8 md:text-xl {{ $hasHero ? 'text-white/90' : 'text-gray-600' }}">
                         Mashariki Group is a multi-sector holding company operating at the intersection of
                         mobility, film, creative education, content markets, and advertising across Africa.
                     </p>
 
-                    <p class="mb-10 max-w-2xl text-lg leading-8 text-gray-600">
+                    <p class="mb-10 max-w-2xl text-lg leading-8 {{ $hasHero ? 'text-white/90' : 'text-gray-600' }}">
                         We build, support, and scale brands that shape culture, unlock opportunity, and create
                         long-term value across African markets. Our approach combines creativity, strategy,
                         storytelling, and disciplined execution to grow businesses with real impact.

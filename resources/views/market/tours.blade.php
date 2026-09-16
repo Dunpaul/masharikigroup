@@ -8,7 +8,14 @@
 
     <section class="py-16 md:py-24 bg-white">
         <div class="max-w-6xl mx-auto px-6 lg:px-8">
-            <h1 class="text-3xl md:text-4xl font-medium text-[#111111] mb-12 text-center">Tours &amp; Accommodation</h1>
+            @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
+            <div @class(['relative text-center mb-12', 'overflow-hidden rounded-3xl py-16 px-6' => $hasHero])>
+                @if ($hasHero)
+                    @include('partials.page-hero')
+                    <div class="absolute inset-0 bg-black/60"></div>
+                @endif
+                <h1 class="relative z-10 text-3xl md:text-4xl font-medium {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">Tours &amp; Accommodation</h1>
+            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <a href="https://www.planettravel.rw/" target="_blank" rel="noopener" class="group rounded-2xl overflow-hidden border border-black/10 hover:-translate-y-0.5 transition duration-300">

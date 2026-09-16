@@ -8,7 +8,14 @@
 
     <section class="py-16 md:py-24 bg-white">
         <div class="max-w-6xl mx-auto px-6 lg:px-8">
-            <h1 class="text-3xl md:text-4xl font-medium text-[#111111] mb-8 text-center">Schedule</h1>
+            @php $hasHero = \App\Models\PageHero::forPage($brand['key'], request()->route()->getName())->active()->exists(); @endphp
+            <div @class(['relative text-center mb-8', 'overflow-hidden rounded-3xl py-16 px-6' => $hasHero])>
+                @if ($hasHero)
+                    @include('partials.page-hero')
+                    <div class="absolute inset-0 bg-black/60"></div>
+                @endif
+                <h1 class="relative z-10 text-3xl md:text-4xl font-medium {{ $hasHero ? 'text-white' : 'text-[#111111]' }}">Schedule</h1>
+            </div>
 
             <form method="GET" class="flex flex-wrap justify-center gap-3 mb-12">
                 <select name="day" onchange="this.form.submit()" class="px-4 py-2 rounded-full border border-gray-300 text-sm">
