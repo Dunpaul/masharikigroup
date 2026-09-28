@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('festival_guest_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['festival_program_id', 'festival_guest_id']);
+            $table->unique(['festival_program_id', 'festival_guest_id'], 'festival_program_guest_unique');
         });
     }
 
