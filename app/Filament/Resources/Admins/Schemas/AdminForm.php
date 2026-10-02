@@ -5,9 +5,21 @@ namespace App\Filament\Resources\Admins\Schemas;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Spatie\Permission\Models\Role;
 
 class AdminForm
 {
+    /**
+     * Friendly labels for role slugs, keyed by the role's `name` column.
+     */
+    public const ROLE_LABELS = [
+        'super-admin' => 'Super Admin (all sections)',
+        'group-admin' => 'Group only',
+        'academy-admin' => 'Academy only',
+        'market-admin' => 'MashaRket only',
+        'festival-admin' => 'Festival only',
+    ];
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -24,13 +36,8 @@ class AdminForm
                 Select::make('roles')
                     ->label('Section access')
                     ->relationship('roles', 'name')
-                    ->options([
-                        'super-admin' => 'Super Admin (all sections)',
-                        'group-admin' => 'Group only',
-                        'academy-admin' => 'Academy only',
-                        'market-admin' => 'MashaRket only',
-                        'festival-admin' => 'Festival only',
-                    ])
+                    ->options(fn () => Role::query()->pluck('name', 'id')
+                        ->map(fn (string $name) => self::ROLE_LABELS[$name] ?? $name))
                     ->multiple()
                     ->preload()
                     ->required()
