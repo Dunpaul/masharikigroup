@@ -8,8 +8,9 @@ configuration (name, host, colors, nav, socials).
 - **Mashariki Arts Academy** — creative academy (`config('brands.academy')`)
 - **Masharket** — content market (`config('brands.market')`)
 
-`masharikifestival.org` (WordPress, run by a different team) is out of scope —
-linked to, never merged.
+`masharikifestival.org` was originally out of scope (WordPress, run by a
+different team) — **as of the Phase 4 cutover below, its DNS now points at
+this app** and it is in scope as the fourth brand (`config('brands.festival')`).
 
 ## Local setup
 
@@ -194,5 +195,95 @@ php artisan make:filament-user
   old academy app were dead code — never rendered by the view. The real
   content was an inline `$learningAreas` array in `services.blade.php`,
   which is what got moved into the CMS.)
-- **Phase 4 (domains + cutover):** not started — do not touch DNS until
-  explicitly approved.
+- **Phase 4 (domains + cutover):** in progress, on a **Truehost shared
+  cPanel account** (`masharikigroup.org` is the primary domain; the other
+  three were added as **Parked Domains**, not Addon Domains — Truehost's
+  parking feature serves them from the account's main document root
+  automatically, so no manual symlinking was needed, unlike the generic
+  addon-domain setup originally sketched in `DEPLOYMENT.md`).
+
+  **Actual deployment layout differs from `DEPLOYMENT.md`'s original plan:**
+  the whole app (including `vendor/`, `app/`, `.env`, etc.) lives directly
+  in `~/public_html` rather than in a sibling folder with `public/`
+  symlinked in — this host doesn't give easy access outside the web root.
+  `.htaccess` denies direct access to source/config files and rewrites
+  everything through `index.php`, same effective result as the symlink
+  approach. `DEPLOYMENT.md` still describes the symlink/addon-domain
+  version and needs a rewrite to match reality.
+
+  **Server IP gotcha:** the Truehost welcome email's listed "Server IP"
+  (used for SSH/FTP) is *not* the IP the sites are actually served on —
+  confirm the real serving IP via `uapi DomainInfo single_domain_data
+  domain=<domain>` (field `ip`) before testing with `curl --resolve`,
+  rather than trusting the welcome email.
+
+  **Cutover status per domain** (as of this phase):
+  - `masharikigroup.org` — DNS already pointed here, serving correctly,
+    valid AutoSSL cert (multi-domain SAN, not per-domain CN — this is
+    normal, browsers check SAN not CN).
+  - `masharikiacademy.org` — same, DNS pointed here, serving correctly,
+    covered by the same AutoSSL cert.
+  - `www.masharikifestival.org` — DNS already pointed here (this is the
+    WordPress-replacement cutover `DEPLOYMENT.md` flags as one-way/risky —
+    confirm with the team that this was intentional and the old WordPress
+    site's content is backed up, since it happened before this
+    documentation pass caught up).
+  - `masharket.com` — **cut over and verified**: mail was decoupled first
+    (`mail.masharket.com` converted from a CNAME to its own `A` record on
+    the old host, `MX` repointed at `mail.masharket.com` instead of the
+    apex), then the apex `A` record was moved to the new server. Confirmed
+    post-cutover: site serves correct content, AutoSSL picked up the
+    domain (triggered manually via `uapi SSL start_autossl_check` rather
+    than waiting for the next scheduled run), and mail (`MX`/`mail.*`)
+    still resolves to the old host untouched.
+
+  **Also fixed:** none of the four domains had a working canonical-host
+  redirect — every domain's alternate form (`www.` for the three apex
+  brands, bare apex for Festival) returned a 404, since
+  `Route::domain()` only matches the exact `BRAND_*_HOST` value. Added
+  rewrite rules to `public_html/.htaccess` (301 `www.<domain>` →
+  `<domain>` for Group/Academy/Market, and bare `masharikifestival.org` →
+  `www.masharikifestival.org`). All four verified working post-change.
+
+  **Admin panel 403 (post-cutover):** after DNS went live, `/admin` gave a
+  genuine Laravel-rendered 403 for every user, including a freshly-seeded
+  `super-admin`, even though `canAccessPanel()` on `User` correctly checked
+  roles. Root cause: the deployed `app/Models/User.php` had the
+  `canAccessPanel()` method but was **missing `implements
+  FilamentUser`** (`Filament\Models\Contracts\FilamentUser`). Filament only
+  calls `canAccessPanel()` if the model is an `instanceof FilamentUser`;
+  without the interface it silently skips the method entirely and falls
+  back to its own default (deny in production), which is why the method
+  never even logged when probed directly. This exact fix already existed
+  as an **uncommitted local change** before this deployment pass — it had
+  been written but never shipped. Diagnosed by confirming (a) login itself
+  succeeded (`POST /livewire-*/update` → 200), (b) the subsequent `GET
+  /admin` 403 was Laravel's own styled error template, not Apache's, by
+  comparing response bodies, and (c) a raw `error_log()` probe inserted
+  directly into `canAccessPanel()` never fired on a real request despite
+  firing fine under `artisan tinker` — proving the method wasn't being
+  reached at all, not that its logic was wrong. **Still uncommitted** as of
+  this writing — commit this change so it doesn't regress on the next
+  deploy.
+
+  **"Section access" validation bug:** creating/editing an admin in the
+  Filament `Admins` resource always failed with "The selected section
+  access is invalid," regardless of which role(s) were picked. Cause:
+  `AdminForm`'s `Select::make('roles')` used `->relationship('roles',
+  'name')` (which validates submitted values against the `roles` table's
+  `id` column) but a hardcoded `->options()` array keyed by role *name*
+  strings (`'super-admin'`, etc.) instead of their numeric `id`s — every
+  selection failed the same `exists:roles,id` check since none of the
+  slugs matched an actual `id`. Fixed in
+  `app/Filament/Resources/Admins/Schemas/AdminForm.php` by building the
+  options from `Role::query()->pluck('name', 'id')` (real IDs as keys)
+  mapped through a friendly-label lookup, instead of hand-writing
+  slug-keyed options.
+
+  **Fixed along the way:** `.env` had `BRAND_GROUP_HOST` defined twice with
+  conflicting values (`www.masharikigroup.org` then, later in the file,
+  `masharikigroup.org`) — PHP dotenv keeps the first occurrence, so Group
+  was only matching the `www.` host. Also normalized `BRAND_ACADEMY_HOST`
+  and `BRAND_MARKET_HOST` to apex domains (no `www.`), matching
+  `DEPLOYMENT.md`'s documented convention — only Festival's host is
+  `www.`-prefixed by design.
