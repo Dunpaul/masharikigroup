@@ -65,7 +65,7 @@ class MarketSettingsResource extends Resource
                             ->helperText('e.g. linkedin, instagram, whatsapp, tiktok, youtube, facebook'),
                     ]),
                 Section::make('Pricing')
-                    ->description('Registration fees charged via Flutterwave at checkout. Students remain free.')
+                    ->description('Registration fees charged via Pesapal at checkout. Students remain free.')
                     ->columns(4)
                     ->components([
                         TextInput::make('exhibitor_fee')->label('Exhibitor fee')->numeric()->required(),

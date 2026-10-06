@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Exhibitor;
 use App\Models\NonExhibitor;
 use App\Models\VirtualAttendant;
-use App\Services\FlutterwaveService;
+use App\Services\PesapalService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -30,7 +30,7 @@ class PaymentController extends Controller
         ];
     }
 
-    public function initiate(string $type, string $registrationId, FlutterwaveService $flutterwave): RedirectResponse
+    public function initiate(string $type, string $registrationId, PesapalService $pesapal): RedirectResponse
     {
         $modelClass = $this->registrantModels()[$type] ?? null;
 
@@ -42,27 +42,25 @@ class PaymentController extends Controller
             return redirect()->route('market.ticket.show', ['type' => $type, 'registrationId' => $registrationId]);
         }
 
-        $txRef = strtoupper($type).'-'.$registrant->registration_id.'-'.now()->timestamp;
-        $registrant->update(['payment_reference' => $txRef]);
+        $merchantReference = strtoupper($type).'-'.$registrant->registration_id.'-'.now()->timestamp;
+        $registrant->update(['payment_reference' => $merchantReference]);
 
         try {
-            $response = $flutterwave->initiatePayment([
-                'tx_ref' => $txRef,
-                'amount' => $registrant->amount,
+            $response = $pesapal->submitOrder([
+                'id' => $merchantReference,
                 'currency' => $registrant->currency,
-                'redirect_url' => route('market.payments.callback'),
-                'customer' => [
-                    'email' => $registrant->company_contact_email,
-                    'name' => "{$registrant->company_contact_first_name} {$registrant->company_contact_last_name}",
-                    'phonenumber' => $registrant->company_contact_phone,
-                ],
-                'customizations' => [
-                    'title' => 'Masharket Registration',
-                    'description' => ucfirst(str_replace('_', ' ', $type)).' registration — '.$registrant->registration_id,
+                'amount' => $registrant->amount,
+                'description' => ucfirst(str_replace('_', ' ', $type)).' registration — '.$registrant->registration_id,
+                'callback_url' => route('market.payments.callback'),
+                'billing_address' => [
+                    'email_address' => $registrant->company_contact_email,
+                    'phone_number' => $registrant->company_contact_phone,
+                    'first_name' => $registrant->company_contact_first_name,
+                    'last_name' => $registrant->company_contact_last_name,
                 ],
             ]);
         } catch (\Throwable $e) {
-            Log::error('Flutterwave payment initiation failed', [
+            Log::error('Pesapal payment initiation failed', [
                 'registration_id' => $registrant->registration_id,
                 'error' => $e->getMessage(),
             ]);
@@ -72,30 +70,56 @@ class PaymentController extends Controller
                 ->with('error', "We couldn't start payment right now. Please try again in a moment, or contact us with reference {$registrant->registration_id}.");
         }
 
-        return redirect()->away($response['data']['link']);
+        if (empty($response['redirect_url'])) {
+            Log::error('Pesapal payment initiation returned no redirect_url', [
+                'registration_id' => $registrant->registration_id,
+                'response' => $response,
+            ]);
+
+            return redirect()
+                ->route($this->registrationRoutes()[$type])
+                ->with('error', "We couldn't start payment right now. Please try again in a moment, or contact us with reference {$registrant->registration_id}.");
+        }
+
+        $registrant->update(['pesapal_order_tracking_id' => $response['order_tracking_id']]);
+
+        return redirect()->away($response['redirect_url']);
     }
 
     public function callback(Request $request): RedirectResponse
     {
-        $txRef = $request->query('tx_ref');
-        $transactionId = $request->query('transaction_id');
-        $status = $request->query('status');
+        return $this->handleStatusCheck(
+            $request->query('OrderTrackingId'),
+            $request->query('OrderMerchantReference'),
+        );
+    }
 
-        [$type, $registrant] = $this->findByReference($txRef);
+    public function webhook(Request $request): \Illuminate\Http\Response
+    {
+        $this->handleStatusCheck(
+            $request->query('OrderTrackingId'),
+            $request->query('OrderMerchantReference'),
+        );
+
+        // Pesapal's IPN just needs a 200 — it doesn't follow the redirect.
+        return response('OK', 200);
+    }
+
+    protected function handleStatusCheck(?string $orderTrackingId, ?string $merchantReference): RedirectResponse
+    {
+        [$type, $registrant] = $this->findByReference($merchantReference);
 
         if (! $registrant) {
             return redirect()->route('market.home')->with('error', 'We could not find that payment reference.');
         }
 
-        if ($status !== 'successful' || ! $transactionId) {
-            $registrant->update(['payment_status' => 'failed']);
-
+        if (! $orderTrackingId) {
             return redirect()
                 ->route($this->registrationRoutes()[$type])
                 ->with('error', "Payment was not completed. Your registration ({$registrant->registration_id}) is saved — you can try paying again from this page.");
         }
 
-        return $this->confirmPayment($type, $registrant, $transactionId)
+        return $this->confirmPayment($type, $registrant, $orderTrackingId)
             ? redirect()->route('market.ticket.show', ['type' => $type, 'registrationId' => $registrant->registration_id])
                 ->with('success', 'Payment confirmed! Your ticket is ready below.')
             : redirect()
@@ -103,37 +127,17 @@ class PaymentController extends Controller
                 ->with('error', "We couldn't confirm that payment. Your registration ({$registrant->registration_id}) is saved — you can try paying again from this page.");
     }
 
-    public function webhook(Request $request): \Illuminate\Http\Response
-    {
-        if (! hash_equals((string) config('services.flutterwave.webhook_secret_hash'), (string) $request->header('verif-hash'))) {
-            abort(401);
-        }
-
-        $data = $request->input('data', []);
-        $txRef = $data['tx_ref'] ?? null;
-        $transactionId = $data['id'] ?? null;
-        $status = $data['status'] ?? null;
-
-        [$type, $registrant] = $this->findByReference($txRef);
-
-        if ($registrant && $status === 'successful' && $transactionId && $registrant->payment_status !== 'paid') {
-            $this->confirmPayment($type, $registrant, (string) $transactionId);
-        }
-
-        return response('OK', 200);
-    }
-
     /**
      * @return array{0: ?string, 1: ?\Illuminate\Database\Eloquent\Model}
      */
-    protected function findByReference(?string $txRef): array
+    protected function findByReference(?string $merchantReference): array
     {
-        if (! $txRef) {
+        if (! $merchantReference) {
             return [null, null];
         }
 
         foreach ($this->registrantModels() as $type => $modelClass) {
-            $registrant = $modelClass::where('payment_reference', $txRef)->first();
+            $registrant = $modelClass::where('payment_reference', $merchantReference)->first();
 
             if ($registrant) {
                 return [$type, $registrant];
@@ -144,35 +148,35 @@ class PaymentController extends Controller
     }
 
     /**
-     * The authoritative check: re-verify the transaction with Flutterwave
-     * rather than trusting the redirect query string or webhook payload.
+     * The authoritative check: re-verify the transaction with Pesapal
+     * rather than trusting the redirect query string or IPN call — Pesapal
+     * doesn't sign either of those, so GetTransactionStatus is the only
+     * trustworthy source of truth.
      */
-    protected function confirmPayment(string $type, $registrant, string $transactionId): bool
+    protected function confirmPayment(string $type, $registrant, string $orderTrackingId): bool
     {
         try {
-            $verification = app(FlutterwaveService::class)->verifyTransaction($transactionId);
+            $status = app(PesapalService::class)->getTransactionStatus($orderTrackingId);
         } catch (\Throwable $e) {
-            Log::error('Flutterwave transaction verification failed', [
+            Log::error('Pesapal transaction status check failed', [
                 'registration_id' => $registrant->registration_id,
-                'transaction_id' => $transactionId,
+                'order_tracking_id' => $orderTrackingId,
                 'error' => $e->getMessage(),
             ]);
 
             return false;
         }
 
-        $data = $verification['data'] ?? [];
-
-        $verified = ($data['status'] ?? null) === 'successful'
-            && ($data['tx_ref'] ?? null) === $registrant->payment_reference
-            && (float) ($data['amount'] ?? 0) >= (float) $registrant->amount
-            && ($data['currency'] ?? null) === $registrant->currency;
+        $verified = ($status['payment_status_description'] ?? null) === 'Completed'
+            && ($status['merchant_reference'] ?? null) === $registrant->payment_reference
+            && (float) ($status['amount'] ?? 0) >= (float) $registrant->amount
+            && ($status['currency'] ?? null) === $registrant->currency;
 
         if (! $verified) {
-            Log::warning('Flutterwave transaction verification mismatch', [
+            Log::warning('Pesapal transaction verification mismatch', [
                 'registration_id' => $registrant->registration_id,
-                'transaction_id' => $transactionId,
-                'verification' => $data,
+                'order_tracking_id' => $orderTrackingId,
+                'status' => $status,
             ]);
 
             $registrant->update(['payment_status' => 'failed']);
@@ -182,7 +186,7 @@ class PaymentController extends Controller
 
         $registrant->update([
             'payment_status' => 'paid',
-            'flutterwave_transaction_id' => (string) $transactionId,
+            'pesapal_order_tracking_id' => $orderTrackingId,
             'paid_at' => now(),
         ]);
 

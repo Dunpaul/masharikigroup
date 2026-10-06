@@ -72,18 +72,55 @@ outside the web root, so the whole app — `app/`, `vendor/`, `.env`,
 `composer.json`, etc. — was deployed **directly into `~/public_html`**
 rather than into a sibling folder with `public/` symlinked in. Source/
 config protection is handled entirely by `.htaccess` instead of by
-filesystem placement (see `public_html/.htaccess`, which denies direct
-access to `composer.json`, `.env*`, `artisan`, etc. and blocks the
-`app|bootstrap|config|database|resources|routes|storage|tests|vendor|
-node_modules` paths with a `[F,L]` rewrite rule). If your host *does* give
-you a directory outside the web root, prefer that — it's a stronger
-guarantee than a rewrite rule.
+filesystem placement. If your host *does* give you a directory outside
+the web root, prefer that — it's a stronger guarantee than a rewrite rule.
+
+The live `.htaccess` is **not** the one at `public/.htaccess` in this
+repo (that's Laravel's stock one, for a normal `public/`-as-docroot
+deploy) — it's tracked separately at `deploy/public_html.htaccess`,
+since this host's docroot *is* the app root. Upload it as `.htaccess` at
+the docroot:
 
 ```bash
 cd ~/public_html
 git clone <your-repo-url> .   # or git pull if already cloned
+cp deploy/public_html.htaccess .htaccess
 composer install --no-dev --optimize-autoloader
 ```
+
+**Broken hero images after upload — a real incident, now fixed in that
+file.** `deploy/public_html.htaccess` denies direct access to
+`app|bootstrap|config|database|resources|routes|storage|tests|vendor|
+node_modules` with a blanket `[F,L]` rule — necessary, since `storage/`
+here holds framework logs/sessions/cache, not just uploads. But every
+image uploaded through Filament (Page Heroes, Gallery, partner logos,
+etc.) is served from the **public storage disk**, and both
+`asset('storage/'.$path)` calls in Blade and `Storage::disk('public')
+->url()` always generate a `/storage/...` URL — which that same blanket
+rule was swallowing, producing broken images in production while working
+fine locally (local dev's standard `public/storage` symlink isn't
+affected by this custom rule at all). Fixed with a rewrite that serves
+`/storage/<path>` from `storage/app/public/<path>` — the one Laravel
+convention actually expects — *before* the blanket deny rule, gated so it
+only fires for files that genuinely exist there (so log/session/cache
+paths under `storage/` still correctly 403, not silently 404):
+```apache
+RewriteCond %{REQUEST_URI} !^/storage/app/public/
+RewriteCond %{DOCUMENT_ROOT}/storage/app/public/$1 -f
+RewriteRule ^storage/(.+)$ /storage/app/public/$1 [L]
+
+RewriteRule ^(app|bootstrap|config|database|resources|routes|storage(?!/app/public/)|tests|vendor|node_modules)/ - [F,L]
+```
+Two non-obvious things that went wrong building this, worth knowing if
+you ever touch it again: (1) a naive version without the `!^/storage/
+app/public/` guard **infinite-loops into a 500** — `[L]` in `.htaccess`
+(per-directory) context restarts rule matching from the top with the
+*rewritten* URI, so without the guard the already-rewritten path matches
+the same rule again and gets `app/public/` prepended a second time,
+repeatedly, until Apache's internal redirect limit trips; (2) the
+substitution target needs a **leading slash** (`/storage/app/public/$1`,
+not `storage/app/public/$1`) — without it, the per-directory rewrite
+produced a malformed path that still landed on the deny rule.
 
 Build frontend assets **locally** and upload `public/build/` (most shared
 hosts, including Truehost, don't have Node):
@@ -136,9 +173,21 @@ was only matching the `www.` host until caught with:
 grep -n BRAND .env   # any key appearing more than once is a bug
 ```
 
-Also fill in real `MAIL_*` and `FLUTTERWAVE_*` values if/when those are
-live (currently `MAIL_MAILER=log` and blank Flutterwave keys are fine —
-payments were never wired to a real gateway, see `README.md`).
+Also fill in real `MAIL_*` values if/when live (currently `MAIL_MAILER=log`
+is fine).
+
+**Masharket payments run on Pesapal (Rwanda)**, not Flutterwave — see
+`README.md` for why. Fill in `PESAPAL_CONSUMER_KEY`/`PESAPAL_CONSUMER_SECRET`
+from the Pesapal merchant dashboard, then run this **once per environment**
+before any order can be submitted:
+```bash
+php artisan pesapal:register-ipn
+```
+This registers `route('market.payments.webhook')` with Pesapal and prints
+an `ipn_id` — paste that into `.env` as `PESAPAL_IPN_ID`. Every
+`SubmitOrderRequest` call sends this `ipn_id`; without it, Pesapal rejects
+the order. Re-run only if the webhook URL itself changes (e.g. a domain
+change) — the registration doesn't expire.
 
 After any `.env` edit: `php artisan config:clear` (or `config:cache` in
 production once stable) so the app picks it up.

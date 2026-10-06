@@ -88,10 +88,25 @@ php artisan make:filament-user
   The old PayPal integration was **not** ported — it was a non-functional
   stub (hardcoded `$0.01` charge regardless of registrant type, sandbox
   credentials committed directly in the old repo, return URLs pointing at a
-  different domain). Real payment integration is deferred until there's a
-  real gateway account and real per-type pricing to wire up; for now,
-  registrations land as `unpaid` and admins mark them paid manually (bank
-  transfer, mobile money, etc.) via Filament.
+  different domain).
+
+  **Real payment integration is live**, via **Pesapal (Rwanda)** —
+  `PesapalService` + `PaymentController` (`app/Http/Controllers/
+  PaymentController.php`). Flow: registrant submits a form (`unpaid` by
+  default) → redirected to `PaymentController::initiate`, which calls
+  Pesapal's `SubmitOrderRequest` and redirects to the hosted checkout →
+  Pesapal redirects back to `market.payments.callback` (and separately
+  pings `market.payments.webhook` as an IPN) → both re-verify the actual
+  status via `GetTransactionStatus` before marking `paid` — the redirect
+  query string and IPN call are never trusted on their own, since Pesapal
+  doesn't sign either of them. Flutterwave was the original gateway here
+  before the switch to Pesapal; its config/service were fully removed, but
+  `flutterwave_transaction_id` stays on the registrant tables as historical
+  record rather than being dropped. See `DEPLOYMENT.md` for the one-time
+  `pesapal:register-ipn` setup step required per environment.
+
+  Admins can still mark a registrant paid/unpaid manually from Filament
+  (bank transfer, mobile money, waiver code) independently of the gateway.
 
   **Waiver codes** (`WaiverCode` model, `Masharket` nav group in Filament)
   let admins generate one-time codes in bulk ("Generate Codes" action, 1-200

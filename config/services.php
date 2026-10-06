@@ -35,11 +35,13 @@ return [
         ],
     ],
 
-    'flutterwave' => [
-        'public_key' => env('FLUTTERWAVE_PUBLIC_KEY'),
-        'secret_key' => env('FLUTTERWAVE_SECRET_KEY'),
-        'webhook_secret_hash' => env('FLUTTERWAVE_WEBHOOK_SECRET_HASH'),
-        'base_url' => env('FLUTTERWAVE_BASE_URL', 'https://api.flutterwave.com/v3'),
+    // Masharket payments moved from Flutterwave to Pesapal (Rwanda) — see
+    // PesapalService and the `pesapal:register-ipn` artisan command.
+    'pesapal' => [
+        'consumer_key' => env('PESAPAL_CONSUMER_KEY'),
+        'consumer_secret' => env('PESAPAL_CONSUMER_SECRET'),
+        'base_url' => env('PESAPAL_BASE_URL', 'https://cybqa.pesapal.com/pesapalv3'),
+        'ipn_id' => env('PESAPAL_IPN_ID'),
     ],
 
 ];

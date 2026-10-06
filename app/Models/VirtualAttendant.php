@@ -34,6 +34,7 @@ class VirtualAttendant extends Model
         'currency',
         'payment_reference',
         'flutterwave_transaction_id',
+        'pesapal_order_tracking_id',
         'paid_at',
     ];
 

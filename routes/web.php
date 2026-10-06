@@ -92,7 +92,7 @@ Route::domain(config('brands.market.host'))->middleware('brand:market')->group(f
     Route::get('/ticket/{type}/{registrationId}', [TicketController::class, 'show'])->name('market.ticket.show');
     Route::get('/payments/{type}/{registrationId}/pay', [PaymentController::class, 'initiate'])->name('market.payments.initiate');
     Route::get('/payments/callback', [PaymentController::class, 'callback'])->name('market.payments.callback');
-    Route::post('/payments/webhook', [PaymentController::class, 'webhook'])->name('market.payments.webhook');
+    Route::get('/payments/webhook', [PaymentController::class, 'webhook'])->name('market.payments.webhook');
     Route::post('/subscribe', [MarketSubscriberController::class, 'store'])->name('market.subscribe');
 
     Route::get('/login', [RegistrantAuthController::class, 'showLogin'])->name('market.login');
